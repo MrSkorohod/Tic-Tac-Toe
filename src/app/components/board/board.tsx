@@ -46,28 +46,21 @@ export default function Board({
     ));
   }
 
-  function renderRows() {
-    for (let i = 0; i > 3; i++) {
-      const celsArr = i === 0 ? [0, 1, 2] : i === 1 ? [3, 4, 5] : [6, 7, 8];
-      return (
-        <div className={styleBoard['board-row']}>{renderCells(celsArr)}</div>
-      );
-    }
+  function Rows() {
+    return <>
+      {Array.from(new Array(3)).map((_, i) => {
+        const celsArr = i === 0 ? [0, 1, 2] : i === 1 ? [3, 4, 5] : [6, 7, 8];
+        return (
+          <div key={i} className={styleBoard['board-row']}>{renderCells(celsArr)}</div>
+        );
+      })}
+    </>;
   }
 
   return (
     <>
       <div className={styleBoard.status}>{status}</div>
-      {renderRows()}
-      {/* <div className={styleBoard['board-row']}>
-        {renderCells([0, 1, 2])}
-      </div>
-      <div className={styleBoard['board-row']}>
-        {renderCells([3, 4, 5])}
-      </div>
-      <div className={styleBoard['board-row']}>
-        {renderCells([6, 7, 8])}
-      </div> */}
+      <Rows />
     </>
   );
 }
