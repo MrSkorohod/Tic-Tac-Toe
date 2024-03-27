@@ -1,7 +1,14 @@
 'use client';
 import { useState } from 'react';
 import Board from '../board/board';
-import styles from './game.module.css';
+import Grid from '@mui/material/Grid';
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from '@mui/material';
 
 export default function Game() {
   const [history, setHistory] = useState<string[][]>([Array(9).fill(null)]);
@@ -28,20 +35,27 @@ export default function Game() {
       description = 'Go to game start';
     }
     return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
-      </li>
+      <ListItem disablePadding key={move}>
+        <ListItemButton
+          sx={{ p: '0 5px',m: '5px 0', border: '1px solid grey' }}
+          onClick={() => jumpTo(move)}
+        >
+          <ListItemText primary={description} />
+        </ListItemButton>
+      </ListItem>
     );
   });
 
   return (
-    <div className={styles.game}>
-      <div className={styles['game-board']}>
+    <Grid container>
+      <Grid item>
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
-      </div>
-      <div className={styles['game-info']}>
-        <ol>{moves}</ol>
-      </div>
-    </div>
+      </Grid>
+      <Grid item>
+        <Box p={2}>
+          <List>{moves}</List>
+        </Box>
+      </Grid>
+    </Grid>
   );
 }

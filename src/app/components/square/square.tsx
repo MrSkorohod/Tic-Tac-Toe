@@ -1,5 +1,6 @@
 import { ReactEventHandler } from 'react';
 import styleSquare from './square.module.css';
+import Button from '@mui/material/Button';
 
 interface SquareProps {
   value: string | null;
@@ -8,8 +9,12 @@ interface SquareProps {
 
 export default function Square({ value, onSquareClick }: SquareProps) {
   return (
-    <button className={styleSquare.square} onClick={onSquareClick}>
+    <Button
+      variant="text"
+      className={styleSquare.square}
+      onClick={onSquareClick}
+    >
       {value}
-    </button>
+    </Button>
   );
 }

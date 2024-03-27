@@ -1,7 +1,7 @@
 'use client';
-import { Fragment } from 'react';
 import Square from '../square/square';
-import styleBoard from './board.module.css';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 export default function Board({
   xIsNext,
@@ -47,21 +47,40 @@ export default function Board({
   }
 
   function Rows() {
-    return <>
-      {Array.from(new Array(3)).map((_, i) => {
-        const celsArr = i === 0 ? [0, 1, 2] : i === 1 ? [3, 4, 5] : [6, 7, 8];
-        return (
-          <div key={i} className={styleBoard['board-row']}>{renderCells(celsArr)}</div>
-        );
-      })}
-    </>;
+    return (
+      <Grid
+        container
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+      >
+        {Array.from(new Array(3)).map((_, i) => {
+          const celsArr = i === 0 ? [0, 1, 2] : i === 1 ? [3, 4, 5] : [6, 7, 8];
+          return (
+            <Grid item key={i}>
+              {renderCells(celsArr)}
+            </Grid>
+          );
+        })}
+      </Grid>
+    );
   }
 
   return (
-    <>
-      <div className={styleBoard.status}>{status}</div>
-      <Rows />
-    </>
+    <Grid
+      container
+      direction="column"
+      justifyContent="center"
+      alignItems="center"
+      spacing={2}
+    >
+      <Grid item>
+        <Typography variant="h6" component="h6">
+          {status}
+        </Typography>
+        <Rows />
+      </Grid>
+    </Grid>
   );
 }
 
