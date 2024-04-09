@@ -5,18 +5,12 @@ import Game from '@/components/game/game';
 
 export default function Home() {
   return (
-    <Container maxWidth="lg">
       <Box
         sx={{
-          my: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
+          m: 4,
         }}
       >
         <Game />
       </Box>
-    </Container>
   );
 }
