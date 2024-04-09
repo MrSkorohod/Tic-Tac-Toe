@@ -1,15 +1,15 @@
 import * as React from 'react';
-import LanguageContextProvider from '@/contexts/ColorContext';
+import ColorContextProvider from '@/contexts/ColorContext';
 import MainThemeContext from '../contexts/MainThemeContext';
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body>
         <MainThemeContext>
-          <LanguageContextProvider>
+          <ColorContextProvider>
             {props.children}
-          </LanguageContextProvider>
+          </ColorContextProvider>
         </MainThemeContext>
       </body>
     </html>
