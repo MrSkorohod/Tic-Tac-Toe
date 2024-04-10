@@ -1,4 +1,5 @@
 import Game from '@/components/game/game';
+import GameProvider from '@/contexts/GameContext';
 import Box from '@mui/material/Box';
 
 export default function Home() {
@@ -8,7 +9,9 @@ export default function Home() {
         m: 4,
       }}
     >
-      <Game />
+      <GameProvider>
+        <Game />
+      </GameProvider>
     </Box>
   );
 }
