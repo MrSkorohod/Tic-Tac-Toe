@@ -1,5 +1,6 @@
 import { ReactEventHandler } from 'react';
 import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
 
 interface SquareProps {
   value: string | null;
@@ -7,11 +8,13 @@ interface SquareProps {
 }
 
 export default function Square({ value, onSquareClick }: SquareProps) {
+  const theme = useTheme();
+
   return (
       <Button
         variant="text"
         sx={{
-          color: 'primary.dark',
+          color: theme.palette.primary.dark,
           width: 34,
           border: 1,
           borderRadius: 0,
@@ -24,7 +27,7 @@ export default function Square({ value, onSquareClick }: SquareProps) {
           mt: '-1px',
           p: 0,
           textAlign: 'center',
-          borderColor: 'primary.main',
+          borderColor: theme.palette.primary.main,
         }}
         onClick={onSquareClick}
       >

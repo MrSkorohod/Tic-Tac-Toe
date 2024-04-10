@@ -11,7 +11,7 @@ import {
 import { useGameContext } from '@/contexts/GameContext';
 
 export default function Game() {
-  const { history, jumpTo } = useGameContext();
+  const { history, xIsNext, currentSquares, handlePlay, jumpTo } = useGameContext();
 
   const moves = history.map((squares, move) => {
     let description;
@@ -38,7 +38,11 @@ export default function Game() {
   return (
     <Grid container>
       <Grid item>
-        <Board />
+        <Board
+          xIsNext={xIsNext}
+          squares={currentSquares}
+          onPlay={handlePlay}
+        />
       </Grid>
       <Grid item>
         <Box p={2}>
