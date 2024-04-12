@@ -9,11 +9,12 @@ import {
   ListItemText,
 } from '@mui/material';
 import { useGameContext } from '@/contexts/GameContext';
+import { useMemo } from 'react';
 
 export default function Game() {
-  const { history, xIsNext, currentSquares, handlePlay, jumpTo } = useGameContext();
+  const { history, jumpTo } = useGameContext();
 
-  const moves = history.map((squares, move) => {
+  const moves = useMemo(() => history.map((squares, move) => {
     let description;
     if (move > 0) {
       description = 'Go to move #' + move;
@@ -33,16 +34,12 @@ export default function Game() {
         </ListItemButton>
       </ListItem>
     );
-  });
+  }), [history, jumpTo]);
 
   return (
     <Grid container>
       <Grid item>
-        <Board
-          xIsNext={xIsNext}
-          squares={currentSquares}
-          onPlay={handlePlay}
-        />
+        <Board />
       </Grid>
       <Grid item>
         <Box p={2}>
