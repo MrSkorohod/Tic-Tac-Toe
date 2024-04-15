@@ -1,8 +1,9 @@
 'use client';
 
-import { Box, Typography } from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useRouter } from 'next/navigation';
+import NextLink from 'next/link';
 
 export default function InitialPage() {
   const router = useRouter();
@@ -22,7 +23,8 @@ export default function InitialPage() {
       </Typography>
       <Button
         variant='contained'
-        onClick={() => router.push('/game')}
+        component={NextLink}
+        href='/game'
       >
         Start Game
       </Button>

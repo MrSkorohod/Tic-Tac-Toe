@@ -10,9 +10,7 @@ export default function GamePage() {
         m: 4,
       }}
     >
-      <GameProvider>
-        <Game />
-      </GameProvider>
+      <Game />
     </Box>
   );
 }
