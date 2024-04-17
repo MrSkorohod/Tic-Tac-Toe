@@ -15,7 +15,6 @@ export default function Square({ value, onSquareClick }: SquareProps) {
           width: 34,
           border: 1,
           borderRadius: 0,
-          float: 'left',
           fontSize: 24,
           fontWeight: 'bold',
           lineHeight: '34px',
