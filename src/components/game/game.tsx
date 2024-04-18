@@ -1,5 +1,4 @@
 'use client';
-import Board from '../board/board';
 import {
   Box,
   Button,
@@ -7,14 +6,22 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Grid,
 } from '@mui/material';
 import { useGameContext } from '@/contexts/GameContext';
 import { useMemo } from 'react';
 import NextLink from 'next/link';
+import { FixedSizeGrid } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 export default function Game() {
-  const { history, jumpTo } = useGameContext();
+  const {
+    field,
+    history,
+    numberCellsOnField,
+    jumpTo,
+    resetStates,
+    handleClick,
+  } = useGameContext();
 
   const moves = useMemo(
     () =>
@@ -42,26 +49,73 @@ export default function Game() {
     [history, jumpTo]
   );
 
+  const Cell = ({
+    columnIndex,
+    rowIndex,
+    style,
+  }: {
+    columnIndex: number;
+    rowIndex: number;
+    style: {};
+  }) => (
+    <div
+      style={{
+        ...style,
+        border: '1px solid black',
+        textAlign: 'center',
+        fontSize: 24,
+        fontWeight: 'bold',
+        lineHeight: '34px',
+        cursor: 'pointer',
+      }}
+      onClick={() => handleClick(columnIndex, rowIndex)}
+    >
+      {
+        field.find(
+          (item) => item.xIndex === columnIndex && item.yIndex === rowIndex
+        )?.value
+      }
+    </div>
+  );
+
   return (
-    <Grid container>
-      <Grid item>
-        <Board />
+    <Box display='flex' sx={{
+      height: '90vh'
+    }}>
+      <Box display='flex' flexDirection='column' >
+        <div style={{ height: '100%'}}>
+          <AutoSizer>
+            {({ height, width }) => (
+              <FixedSizeGrid
+                columnCount={numberCellsOnField}
+                columnWidth={34}
+                height={height}
+                rowCount={numberCellsOnField}
+                rowHeight={34}
+                width={width}
+              >
+                {Cell}
+              </FixedSizeGrid>
+            )}
+          </AutoSizer>
+        </div>
         <Button
           variant='contained'
           component={NextLink}
           href='/'
           sx={{
-          mt: '20px'
-        }}
+            mt: '20px',
+          }}
+          onClick={() => resetStates()}
         >
           Return Back
         </Button>
-      </Grid>
-      <Grid item>
+      </Box>
+      <Box >
         <Box p={2}>
           <List>{moves}</List>
         </Box>
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }

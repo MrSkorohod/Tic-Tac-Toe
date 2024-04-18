@@ -31,7 +31,7 @@ export type FieldRows = FieldCell[];
 export interface GameContextType {
   history: string[][];
   currentSquares: string[];
-  status: string;
+  // status: string;
   numberCellsOnField: number;
   customizeField: boolean;
   field: FieldRows;
@@ -39,12 +39,13 @@ export interface GameContextType {
   handleClick: (xIndex: number, yIndex: number) => void;
   changeNumberCellsOnField: (numb: number) => void;
   isCustomizeField: () => void;
+  resetStates: () => void;
 }
 
 export const GameContext = createContext<GameContextType>({
   history: [],
   currentSquares: [],
-  status: '',
+  // status: '',
   numberCellsOnField: 3,
   customizeField: false,
   field: [],
@@ -52,6 +53,7 @@ export const GameContext = createContext<GameContextType>({
   handleClick: noop,
   changeNumberCellsOnField: noop,
   isCustomizeField: noop,
+  resetStates: noop,
 });
 
 export enum CellValue {
@@ -64,41 +66,45 @@ export default function GameProvider({ children }: PropsWithChildren) {
   const [history, setHistory] = useState<CellValue[][]>(defaultHistory);
   const [currentMove, setCurrentMove] = useState<number>(0);
 
-  const [customizeField, setCustomizeField] = useState(false);
-  const [numberCellsOnField, setNumberCellsOnField] = useState(3);
-  const [field, setField] = useState([] as FieldRows);
+  const [customizeField, setCustomizeField] = useState<boolean>(false);
+  const [numberCellsOnField, setNumberCellsOnField] = useState<number>(3);
+  const [field, setField] = useState<FieldRows>([]);
 
   const isXNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
-  const winner = calculateWinner(currentSquares);
+  // const winner = calculateWinner(currentSquares);
 
-  const status = useMemo(() => {
-    if (winner) {
-      return 'Winner: ' + winner;
-    } else {
-      return 'Next player: ' + (isXNext ? CellValue.X : CellValue.O);
-    }
-  }, [winner, isXNext]);
+  // const status = useMemo(() => {
+  //   if (winner) {
+  //     return 'Winner: ' + winner;
+  //   } else {
+  //     return 'Next player: ' + (isXNext ? CellValue.X : CellValue.O);
+  //   }
+  // }, [winner, isXNext]);
 
   function handleClick(xIndex: number, yIndex: number): void {
-    // if (currentSquares[index] || calculateWinner(currentSquares)) {
-    //   return;
-    // }
-
-    // const nextSquares = currentSquares.slice();
-    // nextSquares[index] = isXNext ? CellValue.X : CellValue.O;
-    // handlePlay(nextSquares);
+    if (field.find((item) => item.xIndex === xIndex && item.yIndex === yIndex)?.value !== CellValue.Empty) {
+      return;
+    }
     setField((prev) => {
       const changedIndex = prev.findIndex(
         (item) => item.xIndex === xIndex && item.yIndex === yIndex
       );
-      prev[changedIndex].value = isXNext ? CellValue.X : CellValue.O;
-      return prev
+      prev[changedIndex].value =
+        prev[changedIndex].value === CellValue.Empty
+          ? isXNext
+            ? CellValue.X
+            : CellValue.O
+          : prev[changedIndex].value;
+      return [...prev];
     });
+
+    setCurrentMove((move) => move + 1);
   }
 
   function calculateWinner(squares: CellValue[]): CellValue | null {
+    
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (
@@ -153,12 +159,16 @@ export default function GameProvider({ children }: PropsWithChildren) {
     }
   }
 
+  function resetStates(): void {
+    setCustomizeField(false), setNumberCellsOnField(3), setField([]), setCurrentMove(0);
+  }
+
   return (
     <GameContext.Provider
       value={{
         history,
         currentSquares,
-        status,
+        // status,
         numberCellsOnField,
         customizeField,
         field,
@@ -166,6 +176,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
         handleClick,
         changeNumberCellsOnField,
         isCustomizeField,
+        resetStates,
       }}
     >
       {children}
