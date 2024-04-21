@@ -68,23 +68,19 @@ export default function Game() {
         lineHeight: '34px',
         cursor: 'pointer',
       }}
-      onClick={() => handleClick(columnIndex, rowIndex)}
+      onClick={() => handleClick(rowIndex, columnIndex)}
     >
-      {
-        field.find(
-          (item) => item.xIndex === columnIndex && item.yIndex === rowIndex
-        )?.value
-      }
+     {field?.[rowIndex]?.[columnIndex]}
     </div>
   );
 
   return (
     <Box display='flex' sx={{
-      height: '90vh'
+      height: '50vh'
     }}>
-      <Box display='flex' flexDirection='column' >
-        <div style={{ height: '100%'}}>
-          <AutoSizer>
+      <Box display='flex' flexDirection='column'>
+        <div style={{ height: '100%', width: '50vw' }}>
+          <AutoSizer style={{ minWidth: '100%'}}>
             {({ height, width }) => (
               <FixedSizeGrid
                 columnCount={numberCellsOnField}
@@ -111,7 +107,7 @@ export default function Game() {
           Return Back
         </Button>
       </Box>
-      <Box >
+      <Box>
         <Box p={2}>
           <List>{moves}</List>
         </Box>

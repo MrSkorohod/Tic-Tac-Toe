@@ -2,23 +2,14 @@
 import {
   PropsWithChildren,
   createContext,
+  useCallback,
   useContext,
-  useMemo,
+  useEffect,
   useState,
 } from 'react';
 
 const noop = () => {};
 const defaultHistory = [Array(9).fill(null)];
-const lines = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-]; //TODO Change Logic for find a winner
 
 export interface FieldCell {
   yIndex: number | null;
@@ -26,12 +17,11 @@ export interface FieldCell {
   value: CellValue;
 }
 
-export type FieldRows = FieldCell[];
+export type FieldRows = CellValue[][];
 
 export interface GameContextType {
   history: string[][];
   currentSquares: string[];
-  // status: string;
   numberCellsOnField: number;
   customizeField: boolean;
   field: FieldRows;
@@ -45,7 +35,6 @@ export interface GameContextType {
 export const GameContext = createContext<GameContextType>({
   history: [],
   currentSquares: [],
-  // status: '',
   numberCellsOnField: 3,
   customizeField: false,
   field: [],
@@ -73,57 +62,83 @@ export default function GameProvider({ children }: PropsWithChildren) {
   const isXNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
-  // const winner = calculateWinner(currentSquares);
+  const calculateWinner = useCallback((getCurrent: (index: number) => CellValue): CellValue | null => {
+    const dialogWinner = Array.from(new Array(numberCellsOnField)).reduce(
+      ([player, count], _, idx) => {
+        const currValue = getCurrent(idx);
 
-  // const status = useMemo(() => {
-  //   if (winner) {
-  //     return 'Winner: ' + winner;
-  //   } else {
-  //     return 'Next player: ' + (isXNext ? CellValue.X : CellValue.O);
-  //   }
-  // }, [winner, isXNext]);
+        if (!idx) {
+          return [currValue, 1];
+        }
 
-  function handleClick(xIndex: number, yIndex: number): void {
-    if (field.find((item) => item.xIndex === xIndex && item.yIndex === yIndex)?.value !== CellValue.Empty) {
+        if (player === currValue) {
+          return [player, count + 1];
+        }
+
+        return [player, 1];
+      },
+      [undefined, 0]
+    );
+
+    if (dialogWinner[1] === numberCellsOnField && dialogWinner[0]) {
+      return dialogWinner[0]
+    }
+    return null
+
+  }, [numberCellsOnField]); 
+
+// Use this useEffect for determined winner
+  useEffect(() => {
+    const getDiagonal = (index: number) => {
+      return field?.[index]?.[index];
+    }
+
+    const getAntiDiagonal = (index: number) => {
+      return field?.[index]?.[numberCellsOnField - index -1];
+    }
+    const getterWinPositions = [getDiagonal, getAntiDiagonal];
+
+    for (let i = 0; i < numberCellsOnField; i++) {
+      const getRow = (index: number) => {
+        return field?.[i]?.[index];
+      }
+      const getColl = (index: number) => {
+        return field?.[index]?.[i];
+      }
+
+      getterWinPositions.push(getRow, getColl);
+    }
+
+
+    getterWinPositions.find(getterWinPosition => {
+      const winner = calculateWinner(getterWinPosition);
+      if(!!winner) {
+        alert(`Winner: ${winner}`);
+      }
+
+      return !!winner
+    })
+   
+
+  }, [field,numberCellsOnField,  calculateWinner]);
+
+  
+
+
+  function handleClick(rowIndex: number, columnIndex: number): void {
+    if (field[rowIndex]?.[columnIndex]) {
       return;
     }
-    setField((prev) => {
-      const changedIndex = prev.findIndex(
-        (item) => item.xIndex === xIndex && item.yIndex === yIndex
-      );
-      prev[changedIndex].value =
-        prev[changedIndex].value === CellValue.Empty
-          ? isXNext
-            ? CellValue.X
-            : CellValue.O
-          : prev[changedIndex].value;
-      return [...prev];
-    });
+    setField((prevValue) => {
+      const newField = [...prevValue];
 
-    setCurrentMove((move) => move + 1);
-  }
-
-  function calculateWinner(squares: CellValue[]): CellValue | null {
-    
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (
-        squares[a] &&
-        squares[a] === squares[b] &&
-        squares[a] === squares[c]
-      ) {
-        return squares[a];
+      if (!newField[rowIndex]) {
+        newField[rowIndex] = [];
       }
-    }
-    return null;
-  }
-
-  function handlePlay(nextSquares: CellValue[]): void {
-    setHistory((prevHistory) => {
-      const nextHistory = prevHistory.slice(0, currentMove + 1);
-      nextHistory.push(nextSquares);
-      return nextHistory;
+      newField[rowIndex][columnIndex] = isXNext ? CellValue.X : CellValue.O;
+      return newField;
     });
+
     setCurrentMove((move) => move + 1);
   }
 
@@ -133,22 +148,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
 
   function changeNumberCellsOnField(numb: number): void {
     setNumberCellsOnField((prev) => numb);
-    setField((prevVal) => {
-      let newArr = [...prevVal];
-      Array.from(new Array(numb)).forEach((_, xIndex) => {
-        Array.from(new Array(numb)).forEach((_, yIndex) => {
-          newArr = [
-            ...newArr,
-            {
-              xIndex,
-              yIndex,
-              value: CellValue.Empty,
-            },
-          ];
-        });
-      });
-      return newArr;
-    });
+    setField([]);
   }
 
   function isCustomizeField(): void {
@@ -160,7 +160,10 @@ export default function GameProvider({ children }: PropsWithChildren) {
   }
 
   function resetStates(): void {
-    setCustomizeField(false), setNumberCellsOnField(3), setField([]), setCurrentMove(0);
+    setCustomizeField(false),
+      setNumberCellsOnField(3),
+      setField([]),
+      setCurrentMove(0);
   }
 
   return (
@@ -168,7 +171,6 @@ export default function GameProvider({ children }: PropsWithChildren) {
       value={{
         history,
         currentSquares,
-        // status,
         numberCellsOnField,
         customizeField,
         field,
