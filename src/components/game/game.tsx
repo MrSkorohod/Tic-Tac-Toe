@@ -33,10 +33,7 @@ export default function Game() {
           description = 'Go to game start';
         }
         return (
-          <ListItem
-            disablePadding
-            key={move}
-          >
+          <ListItem disablePadding key={move}>
             <ListItemButton
               sx={{ p: '0 5px', m: '5px 0', border: '1px solid grey' }}
               onClick={() => jumpTo(move)}
@@ -70,48 +67,50 @@ export default function Game() {
       }}
       onClick={() => handleClick(rowIndex, columnIndex)}
     >
-     {field?.[rowIndex]?.[columnIndex]}
+      {field?.[rowIndex]?.[columnIndex]}
     </div>
   );
 
   return (
-    <Box display='flex' sx={{
-      height: '50vh'
-    }}>
-      <Box display='flex' flexDirection='column'>
-        <div style={{ height: '100%', width: '50vw' }}>
-          <AutoSizer style={{ minWidth: '100%'}}>
-            {({ height, width }) => (
-              <FixedSizeGrid
-                columnCount={numberCellsOnField}
-                columnWidth={34}
-                height={height}
-                rowCount={numberCellsOnField}
-                rowHeight={34}
-                width={width}
-              >
-                {Cell}
-              </FixedSizeGrid>
-            )}
-          </AutoSizer>
-        </div>
+    <>
+      <Box>
         <Button
-          variant='contained'
+          variant="contained"
           component={NextLink}
-          href='/'
+          href="/"
           sx={{
-            mt: '20px',
+            mb: '20px',
           }}
           onClick={() => resetStates()}
         >
           Return Back
         </Button>
       </Box>
-      <Box>
-        <Box p={2}>
-          <List>{moves}</List>
+      <Box
+        display="flex"
+        sx={{
+          height: '50vh',
+        }}
+      >
+        <Box display="flex" flexDirection="column">
+          <div style={{ height: '100%', width: '50vw' }}>
+            <AutoSizer style={{ minWidth: '100%' }}>
+              {({ height, width }) => (
+                <FixedSizeGrid
+                  columnCount={numberCellsOnField}
+                  columnWidth={34}
+                  height={height}
+                  rowCount={numberCellsOnField}
+                  rowHeight={34}
+                  width={width}
+                >
+                  {Cell}
+                </FixedSizeGrid>
+              )}
+            </AutoSizer>
+          </div>
         </Box>
       </Box>
-    </Box>
+    </>
   );
 }
