@@ -4,7 +4,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useState,
 } from 'react';
 
@@ -28,7 +27,7 @@ export interface GameContextType {
   jumpTo: (nextMove: number) => void;
   handleClick: (xIndex: number, yIndex: number) => void;
   changeNumberCellsOnField: (numb: number) => void;
-  isCustomizeField: () => void;
+  setFieldCustomized: () => void;
   resetStates: () => void;
 }
 
@@ -41,7 +40,7 @@ export const GameContext = createContext<GameContextType>({
   jumpTo: noop,
   handleClick: noop,
   changeNumberCellsOnField: noop,
-  isCustomizeField: noop,
+  setFieldCustomized: noop,
   resetStates: noop,
 });
 
@@ -62,68 +61,66 @@ export default function GameProvider({ children }: PropsWithChildren) {
   const isXNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
-  const calculateWinner = useCallback((getCurrent: (index: number) => CellValue): CellValue | null => {
-    const dialogWinner = Array.from(new Array(numberCellsOnField)).reduce(
-      ([player, count], _, idx) => {
-        const currValue = getCurrent(idx);
 
-        if (!idx) {
-          return [currValue, 1];
-        }
 
-        if (player === currValue) {
-          return [player, count + 1];
-        }
+  const calculateWinner = useCallback(
+    (getCurrent: (index: number) => CellValue): CellValue | null => {
+      const dialogWinner = Array.from(new Array(numberCellsOnField)).reduce(
+        ([player, count], _, idx) => {
+          const currValue = getCurrent(idx);
 
-        return [player, 1];
-      },
-      [undefined, 0]
-    );
+          if (!idx) {
+            return [currValue, 1];
+          }
 
-    if (dialogWinner[1] === numberCellsOnField && dialogWinner[0]) {
-      return dialogWinner[0]
-    }
-    return null
+          if (player === currValue) {
+            return [player, count + 1];
+          }
 
-  }, [numberCellsOnField]); 
+          return [player, 1];
+        },
+        [undefined, 0]
+      );
 
-// Use this useEffect for determined winner
-  useEffect(() => {
+      if (dialogWinner[1] === numberCellsOnField && dialogWinner[0]) {
+        return dialogWinner[0];
+      }
+      return null;
+    },
+    [numberCellsOnField]
+  );
+
+  function determinedWinner() {
     const getDiagonal = (index: number) => {
       return field?.[index]?.[index];
-    }
+    };
 
     const getAntiDiagonal = (index: number) => {
-      return field?.[index]?.[numberCellsOnField - index -1];
-    }
+      return field?.[index]?.[numberCellsOnField - index - 1];
+    };
     const getterWinPositions = [getDiagonal, getAntiDiagonal];
 
     for (let i = 0; i < numberCellsOnField; i++) {
       const getRow = (index: number) => {
         return field?.[i]?.[index];
-      }
+      };
       const getColl = (index: number) => {
         return field?.[index]?.[i];
-      }
+      };
 
       getterWinPositions.push(getRow, getColl);
     }
 
 
-    getterWinPositions.find(getterWinPosition => {
+    getterWinPositions.forEach((getterWinPosition) => {
       const winner = calculateWinner(getterWinPosition);
-      if(!!winner) {
+      if (!!winner) {
         alert(`Winner: ${winner}`);
       }
 
-      return !!winner
-    })
-   
-
-  }, [field,numberCellsOnField,  calculateWinner]);
-
-  
-
+      return !!winner;
+    });
+  };
 
   function handleClick(rowIndex: number, columnIndex: number): void {
     if (field[rowIndex]?.[columnIndex]) {
@@ -139,7 +136,9 @@ export default function GameProvider({ children }: PropsWithChildren) {
       return newField;
     });
 
+
     setCurrentMove((move) => move + 1);
+    determinedWinner();
   }
 
   function jumpTo(nextMove: number): void {
@@ -151,7 +150,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
     setField([]);
   }
 
-  function isCustomizeField(): void {
+  function setFieldCustomized(): void {
     setCustomizeField((prevValue) => !prevValue);
 
     if (customizeField) {
@@ -177,7 +176,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
         jumpTo,
         handleClick,
         changeNumberCellsOnField,
-        isCustomizeField,
+        setFieldCustomized,
         resetStates,
       }}
     >

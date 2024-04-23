@@ -10,24 +10,9 @@ import {
 } from '@mui/material';
 import Button from '@mui/material/Button';
 import NextLink from 'next/link';
-import { useMemo, useState } from 'react';
 
 export default function InitialPage() {
-  const { customizeField, numberCellsOnField, changeNumberCellsOnField, isCustomizeField } = useGameContext();
-
-  function CustomFiledInput() {
-    if (customizeField) {
-      return (
-        <TextField
-          label="Number"
-          type="number"
-          defaultValue={numberCellsOnField}
-          InputProps={{ inputProps: { min: 3} }}
-          onBlur={(ev) => changeNumberCellsOnField(+ev.target.value)}
-        />
-      );
-    }
-  }
+  const { customizeField, numberCellsOnField, changeNumberCellsOnField, setFieldCustomized } = useGameContext();
 
   return (
     <Box display="flex" alignItems="center" flexDirection="column">
@@ -56,14 +41,20 @@ export default function InitialPage() {
           control={
             <Checkbox
               checked={customizeField}
-              onChange={() => isCustomizeField()}
+              onChange={() => setFieldCustomized()}
             />
           }
           label="Custom filed"
         />
       </Box>
 
-      <CustomFiledInput></CustomFiledInput>
+      {customizeField && <TextField
+          label="Number"
+          type="number"
+          defaultValue={numberCellsOnField}
+          InputProps={{ inputProps: { min: 3} }}
+          onBlur={(ev) => changeNumberCellsOnField(+ev.target.value)}
+        />}
     </Box>
   );
 }
