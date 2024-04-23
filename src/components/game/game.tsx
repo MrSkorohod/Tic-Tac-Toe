@@ -16,12 +16,10 @@ import Cell from '../cell/cell';
 
 export default function Game() {
   const {
-    field,
     history,
     numberCellsOnField,
     jumpTo,
     resetStates,
-    handleClick,
   } = useGameContext();
 
   const moves = useMemo(
@@ -46,31 +44,6 @@ export default function Game() {
       }),
     [history, jumpTo]
   );
-
-  // const Cell = ({
-  //   columnIndex,
-  //   rowIndex,
-  //   style,
-  // }: {
-  //   columnIndex: number;
-  //   rowIndex: number;
-  //   style: {};
-  // }) => (
-  //   <div
-  //     style={{
-  //       ...style,
-  //       border: '1px solid black',
-  //       textAlign: 'center',
-  //       fontSize: 24,
-  //       fontWeight: 'bold',
-  //       lineHeight: '34px',
-  //       cursor: 'pointer',
-  //     }}
-  //     onClick={() => handleClick(rowIndex, columnIndex)}
-  //   >
-  //     {field?.[rowIndex]?.[columnIndex]}
-  //   </div>
-  // );
 
   return (
     <>

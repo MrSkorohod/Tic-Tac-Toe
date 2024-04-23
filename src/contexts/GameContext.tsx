@@ -90,7 +90,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
     [numberCellsOnField]
   );
 
-  function determinedWinner() {
+  function determinedWinner(field: FieldRows) {
     const getDiagonal = (index: number) => {
       return field?.[index]?.[index];
     };
@@ -122,23 +122,27 @@ export default function GameProvider({ children }: PropsWithChildren) {
     });
   };
 
+  function updateField(rowIndex: number, columnIndex: number): FieldRows {
+    const newField = [...field];
+
+    if (!newField[rowIndex]) {
+      newField[rowIndex] = [];
+    }
+    newField[rowIndex][columnIndex] = isXNext ? CellValue.X : CellValue.O;
+    return newField;
+  }
+
   function handleClick(rowIndex: number, columnIndex: number): void {
     if (field[rowIndex]?.[columnIndex]) {
       return;
     }
-    setField((prevValue) => {
-      const newField = [...prevValue];
-
-      if (!newField[rowIndex]) {
-        newField[rowIndex] = [];
-      }
-      newField[rowIndex][columnIndex] = isXNext ? CellValue.X : CellValue.O;
-      return newField;
-    });
+    const newField = updateField(rowIndex, columnIndex);
+    setField((prev) => newField);
 
 
+    console.log(field)
     setCurrentMove((move) => move + 1);
-    determinedWinner();
+    determinedWinner(newField);
   }
 
   function jumpTo(nextMove: number): void {
