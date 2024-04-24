@@ -25,16 +25,13 @@ export default function Cell({
 }) {
   const { field, handleClick } = useGameContext();
 
-  const onClick = useCallback(() => handleClick(rowIndex, columnIndex), [columnIndex, rowIndex, handleClick]);
-
-
   return (
     <Button
       style={style}
-      sx={{
-        ...cellStyle
-      }}
-      onClick={onClick}
+      sx={cellStyle}
+      data-column-index={columnIndex}
+      data-row-index={rowIndex}
+      onClick={handleClick}
     >
       
       {field?.[rowIndex]?.[columnIndex]}

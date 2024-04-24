@@ -25,7 +25,7 @@ export interface GameContextType {
   customizeField: boolean;
   field: FieldRows;
   jumpTo: (nextMove: number) => void;
-  handleClick: (xIndex: number, yIndex: number) => void;
+  handleClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   changeNumberCellsOnField: (numb: number) => void;
   setFieldCustomized: () => void;
   resetStates: () => void;
@@ -62,55 +62,60 @@ export default function GameProvider({ children }: PropsWithChildren) {
   const currentSquares = history[currentMove];
 
 
-
   const calculateWinner = useCallback(
     (getCurrent: (index: number) => CellValue): CellValue | null => {
-      const dialogWinner = Array.from(new Array(numberCellsOnField)).reduce(
-        ([player, count], _, idx) => {
-          const currValue = getCurrent(idx);
 
-          if (!idx) {
-            return [currValue, 1];
-          }
+      let counter = 0;
+      let player = null;
 
-          if (player === currValue) {
-            return [player, count + 1];
-          }
+      for(let i = 0; i < numberCellsOnField; i++ ){
+        const currValue = getCurrent(i);
 
-          return [player, 1];
-        },
-        [undefined, 0]
-      );
+        if (!i) {
+          player = currValue
+        }
 
-      if (dialogWinner[1] === numberCellsOnField && dialogWinner[0]) {
-        return dialogWinner[0];
+        if (player === currValue) {
+          counter++;
+        }
+        
+        if (i + 1 < length && i % 100 == 0) {
+          setTimeout(() => {}, 5);
+      }
+
+        player = currValue;
+      }
+
+      if (counter === numberCellsOnField && player) {
+        return player;
       }
       return null;
     },
     [numberCellsOnField]
   );
 
-  function determinedWinner(field: FieldRows) {
-    const getDiagonal = (index: number) => {
-      return field?.[index]?.[index];
-    };
-
-    const getAntiDiagonal = (index: number) => {
-      return field?.[index]?.[numberCellsOnField - index - 1];
-    };
-    const getterWinPositions = [getDiagonal, getAntiDiagonal];
-
-    for (let i = 0; i < numberCellsOnField; i++) {
-      const getRow = (index: number) => {
-        return field?.[i]?.[index];
-      };
-      const getColl = (index: number) => {
-        return field?.[index]?.[i];
-      };
-
-      getterWinPositions.push(getRow, getColl);
+  function determinedWinner(field: FieldRows, rowIndex: number, columnIndex: number) {
+    const getRow = (index: number) =>  {
+      return field?.[rowIndex]?.[index]
     }
 
+    const getColl = (index: number) => {
+      return field?.[index]?.[columnIndex];
+    };
+
+    const getterWinPositions = [getRow, getColl];
+
+    if(rowIndex === columnIndex) {
+      const getDiagonal = (index: number) => {
+        return field?.[index]?.[index];
+      };
+  
+      const getAntiDiagonal = (index: number) => {
+        return field?.[index]?.[numberCellsOnField - index - 1];
+      };
+
+      getterWinPositions.push(getDiagonal, getAntiDiagonal);
+    }
 
     getterWinPositions.forEach((getterWinPosition) => {
       const winner = calculateWinner(getterWinPosition);
@@ -132,17 +137,16 @@ export default function GameProvider({ children }: PropsWithChildren) {
     return newField;
   }
 
-  function handleClick(rowIndex: number, columnIndex: number): void {
+  function handleClick(event: React.MouseEvent<HTMLButtonElement> ): void {
+    const {rowIndex, columnIndex} = (event.currentTarget.dataset as unknown) as {rowIndex: number, columnIndex: number};
     if (field[rowIndex]?.[columnIndex]) {
       return;
     }
     const newField = updateField(rowIndex, columnIndex);
-    setField((prev) => newField);
 
-
-    console.log(field)
+    setField(newField);
     setCurrentMove((move) => move + 1);
-    determinedWinner(newField);
+    determinedWinner(newField, rowIndex, columnIndex);
   }
 
   function jumpTo(nextMove: number): void {
