@@ -78,11 +78,11 @@ export default function GameProvider({ children }: PropsWithChildren) {
         if (player === currValue) {
           counter++;
         }
-        
-        if (i + 1 < length && i % 100 == 0) {
-          setTimeout(() => {}, 5);
-      }
 
+        if(!currValue){
+          break
+        }
+        
         player = currValue;
       }
 
