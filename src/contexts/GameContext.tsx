@@ -68,7 +68,9 @@ export default function GameProvider({ children }: PropsWithChildren) {
       let counter = 0;
       let player = null;
 
-      for(let i = 0; i < numberCellsOnField; i++ ){
+      const maxSizeForWin = 5;
+
+      for(let i = 0; i < numberCellsOnField; i++ ) {
         const currValue = getCurrent(i);
 
         if (!i) {
@@ -79,14 +81,20 @@ export default function GameProvider({ children }: PropsWithChildren) {
           counter++;
         }
 
-        if(!currValue){
-          break
+
+        if(numberCellsOnField > maxSizeForWin && counter === maxSizeForWin) {
+          player = currValue;
+          break;
         }
-        
+
+        // if(!currValue) {
+        //   break
+        // }
+
         player = currValue;
       }
 
-      if (counter === numberCellsOnField && player) {
+      if (counter === (numberCellsOnField > maxSizeForWin ? maxSizeForWin : numberCellsOnField) && player) {
         return player;
       }
       return null;
@@ -105,7 +113,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
 
     const getterWinPositions = [getRow, getColl];
 
-    if(rowIndex === columnIndex) {
+    if(rowIndex === columnIndex || rowIndex == Math.abs(columnIndex - numberCellsOnField) - 1) {
       const getDiagonal = (index: number) => {
         return field?.[index]?.[index];
       };

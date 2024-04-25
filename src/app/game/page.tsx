@@ -1,16 +1,24 @@
 'use client';
 import Game from '@/components/game/game';
-import GameProvider from '@/contexts/GameContext';
+import History from '@/components/history/history';
 import { Box } from '@mui/material';
 
 export default function GamePage() {
   return (
-    <Box
-      sx={{
-        m: 4,
-      }}
-    >
-      <Game />
+    <Box display="flex">
+      <Box
+        component="main"
+        sx={{
+          mt: 4,
+          ml:2,
+          textAlign: 'center'
+        }}
+      >
+        <Game />
+      </Box>
+      <Box component="nav">
+        <History />
+      </Box>
     </Box>
   );
 }
