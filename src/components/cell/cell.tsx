@@ -1,6 +1,5 @@
 import { useGameContext } from '@/contexts/GameContext';
 import { Button } from '@mui/material';
-import { useCallback } from 'react';
 
 
 const cellStyle = {

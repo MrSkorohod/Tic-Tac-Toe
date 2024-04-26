@@ -1,6 +1,6 @@
 'use client';
 import Game from '@/components/game/game';
-import History from '@/components/history/history';
+import History from '@/components/history/History';
 import { Box } from '@mui/material';
 
 export default function GamePage() {
