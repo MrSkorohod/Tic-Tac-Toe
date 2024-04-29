@@ -61,165 +61,226 @@ export default function GameProvider({ children }: PropsWithChildren) {
   const isXNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
+  // const calculateWinner = useCallback(
+  //   (player: CellValue, rowIndex: number, columnIndex: number): boolean => {
+  //     const maxSizeForWin = numberCellsOnField > 5 ? 5 : numberCellsOnField;
+
+  //     const countOnDirection = {
+  //       row: {
+  //         count: 1,
+  //         traverse: true,
+  //         reverse: true,
+  //       },
+  //       column: {
+  //         count: 1,
+  //         traverse: true,
+  //         reverse: true,
+  //       },
+  //       diagonal: {
+  //         count: 1,
+  //         traverse: true,
+  //         reverse: true,
+  //       },
+  //       antiDiagonal: {
+  //         count: 1,
+  //         traverse: true,
+  //         reverse: true,
+  //       },
+  //     };
+
+  //     for (let i = 1; i < maxSizeForWin; i++) {
+  //       // debugger;
+  //       // row traverse
+  //       if (
+  //         countOnDirection.row.traverse &&
+  //         rowIndex + i <= numberCellsOnField &&
+  //         field?.[rowIndex + i]?.[columnIndex] === player
+  //       ) {
+  //         countOnDirection.row.count++;
+
+  //         if (countOnDirection.row.count === maxSizeForWin) {
+  //           return true;
+  //         }
+  //       } else {
+  //         countOnDirection.row.traverse = false;
+  //       }
+
+  //       // row reverse
+  //       if (
+  //         countOnDirection.row.reverse &&
+  //         rowIndex - i >= 0 &&
+  //         field?.[rowIndex - i]?.[columnIndex] === player
+  //       ) {
+  //         countOnDirection.row.count++;
+
+  //         if (countOnDirection.row.count === maxSizeForWin) {
+  //           return true;
+  //         }
+  //       } else {
+  //         countOnDirection.row.reverse = false;
+  //       }
+
+  //       // column traverse
+  //       if (
+  //         countOnDirection.column.traverse &&
+  //         columnIndex + i <= numberCellsOnField &&
+  //         field?.[rowIndex]?.[columnIndex + i] === player
+  //       ) {
+  //         countOnDirection.column.count++;
+
+  //         if (countOnDirection.column.count === maxSizeForWin) {
+  //           return true;
+  //         }
+  //       } else {
+  //         countOnDirection.column.traverse = false;
+  //       }
+
+  //       // column reverse
+  //       if (
+  //         countOnDirection.column.reverse &&
+  //         columnIndex - i >= 0 &&
+  //         field?.[rowIndex]?.[columnIndex - i] === player
+  //       ) {
+  //         countOnDirection.column.count++;
+
+  //         if (countOnDirection.column.count === maxSizeForWin) {
+  //           return true;
+  //         }
+  //       } else {
+  //         countOnDirection.column.reverse = false;
+  //       }
+
+  //       // diagonal traverse
+  //       if (
+  //         countOnDirection.diagonal.traverse &&
+  //         rowIndex + i <= numberCellsOnField &&
+  //         columnIndex - i >= 0 &&
+  //         field?.[rowIndex + i]?.[columnIndex - i] === player
+  //       ) {
+  //         countOnDirection.diagonal.count++;
+
+  //         if (countOnDirection.diagonal.count === maxSizeForWin) {
+  //           return true;
+  //         }
+  //       } else {
+  //         countOnDirection.diagonal.traverse = false;
+  //       }
+
+  //       // diagonal reverse
+  //       if (
+  //         countOnDirection.diagonal.reverse &&
+  //         columnIndex + i <= numberCellsOnField &&
+  //         rowIndex - i >= 0 &&
+  //         field?.[rowIndex - i]?.[columnIndex + i] === player
+  //       ) {
+  //         countOnDirection.diagonal.count++;
+
+  //         if (countOnDirection.diagonal.count === maxSizeForWin) {
+  //           return true;
+  //         }
+  //       } else {
+  //         countOnDirection.diagonal.reverse = false;
+  //       }
+
+  //       // antiDiagonal traverse
+  //       if (
+  //         countOnDirection.antiDiagonal.traverse &&
+  //         columnIndex + i <= numberCellsOnField &&
+  //         rowIndex + i >= 0 &&
+  //         field?.[rowIndex + i]?.[columnIndex + i] === player
+  //       ) {
+  //         countOnDirection.antiDiagonal.count++;
+
+  //         if (countOnDirection.antiDiagonal.count === maxSizeForWin) {
+  //           return true;
+  //         }
+  //       } else {
+  //         countOnDirection.antiDiagonal.traverse = false;
+  //       }
+
+  //       // antiDiagonal reverse
+  //       if (
+  //         countOnDirection.antiDiagonal.reverse &&
+  //         rowIndex - i <= numberCellsOnField &&
+  //         columnIndex - i >= 0 &&
+  //         field?.[rowIndex - i]?.[columnIndex - i] === player
+  //       ) {
+  //         countOnDirection.antiDiagonal.count++;
+
+  //         if (countOnDirection.antiDiagonal.count === maxSizeForWin) {
+  //           return true;
+  //         }
+  //       } else {
+  //         countOnDirection.antiDiagonal.reverse = false;
+  //       }
+  //     }
+
+  //     return false;
+  //   },
+  //   [numberCellsOnField, field]
+  // );
+
   const calculateWinner = useCallback(
-    (player: CellValue, rowIndex: number, columnIndex: number): boolean => {
-      const maxSizeForWin = numberCellsOnField > 5 ? 5 : numberCellsOnField;
-
-      const countOnDirection = {
-        row: {
-          count: 1,
-          traverse: true,
-          reverse: true,
-        },
-        column: {
-          count: 1,
-          traverse: true,
-          reverse: true,
-        },
-        diagonal: {
-          count: 1,
-          traverse: true,
-          reverse: true,
-        },
-        antiDiagonal: {
-          count: 1,
-          traverse: true,
-          reverse: true,
-        },
-      };
-
-
-      for (let i = 1; i < maxSizeForWin; i++) {
-        // debugger;
-        // row traverse
-        if (
-          countOnDirection.row.traverse &&
-          rowIndex + i <= numberCellsOnField &&
-          field?.[rowIndex + i]?.[columnIndex] === player
-        ) {
-          countOnDirection.row.count++;
-
-          if (countOnDirection.row.count === maxSizeForWin) {
-            return true;
-          }
-        } else {
-          countOnDirection.row.traverse = false;
+    (getCurrent: (index: number) => CellValue, player: CellValue): boolean => {
+      let rightIndex = -1;
+      for (let i = 1; i < numberCellsOnField; i++) {
+        const currentValue = getCurrent(rightIndex === -1 ? i : rightIndex - i);
+        if (currentValue === player) {
+          continue;
         }
-
-        // row reverse
-        if (
-          countOnDirection.row.reverse &&
-          rowIndex - i >= 0 &&
-          field?.[rowIndex - i]?.[columnIndex] === player
-        ) {
-          countOnDirection.row.count++;
-
-          if (countOnDirection.row.count === maxSizeForWin) {
-            return true;
-          }
+        if (rightIndex === -1) {
+          rightIndex = i;
         } else {
-          countOnDirection.row.reverse = false;
-        }
-
-        // column traverse
-        if (
-          countOnDirection.column.traverse &&
-          columnIndex + i <= numberCellsOnField &&
-          field?.[rowIndex]?.[columnIndex + i] === player
-        ) {
-          countOnDirection.column.count++;
-
-          if (countOnDirection.column.count === maxSizeForWin) {
-            return true;
-          }
-        } else {
-          countOnDirection.column.traverse = false;
-        }
-
-        // column reverse
-        if (
-          countOnDirection.column.reverse &&
-          columnIndex - i >= 0 &&
-          field?.[rowIndex]?.[columnIndex - i] === player
-        ) {
-          countOnDirection.column.count++;
-
-          if (countOnDirection.column.count === maxSizeForWin) {
-            return true;
-          }
-        } else {
-          countOnDirection.column.reverse = false;
-        }
-
-        // diagonal traverse
-        if (
-          countOnDirection.diagonal.traverse &&
-          rowIndex + i <= numberCellsOnField &&
-          columnIndex - i >= 0 &&
-          field?.[rowIndex + i]?.[columnIndex - i] === player
-        ) {
-          countOnDirection.diagonal.count++;
-
-          if (countOnDirection.diagonal.count === maxSizeForWin) {
-            return true;
-          }
-        } else {
-          countOnDirection.diagonal.traverse = false;
-        }
-
-        // diagonal reverse
-        if (
-          countOnDirection.diagonal.reverse &&
-          columnIndex + i <= numberCellsOnField &&
-          rowIndex - i >= 0 &&
-          field?.[rowIndex - i]?.[columnIndex + i] === player
-        ) {
-          countOnDirection.diagonal.count++;
-
-          if (countOnDirection.diagonal.count === maxSizeForWin) {
-            return true;
-          }
-        } else {
-          countOnDirection.diagonal.reverse = false;
-        }
-
-        // antiDiagonal traverse
-        if (
-          countOnDirection.antiDiagonal.traverse &&
-          columnIndex + i <= numberCellsOnField &&
-          rowIndex + i >= 0 &&
-          field?.[rowIndex + i]?.[columnIndex + i] === player
-        ) {
-          countOnDirection.antiDiagonal.count++;
-
-          if (countOnDirection.antiDiagonal.count === maxSizeForWin) {
-            return true;
-          }
-        } else {
-          countOnDirection.antiDiagonal.traverse = false;
-        }
-
-        // antiDiagonal reverse
-        if (
-          countOnDirection.antiDiagonal.reverse &&
-          rowIndex - i <= numberCellsOnField &&
-          columnIndex - i >= 0 &&
-          field?.[rowIndex - i]?.[columnIndex - i] === player
-        ) {
-          countOnDirection.antiDiagonal.count++;
-
-          if (countOnDirection.antiDiagonal.count === maxSizeForWin) {
-            return true;
-          }
-        } else {
-          countOnDirection.antiDiagonal.reverse = false;
+          return false;
         }
       }
-
-      return false;
+      return true;
     },
-    [numberCellsOnField, field]
+    []
   );
+
+  function determinedWinner(
+    field: FieldRows,
+    rowIndex: number,
+    columnIndex: number
+  ) {
+    const getRow = (index: number) => {
+      return field?.[rowIndex + index]?.[columnIndex];
+    };
+    const getColl = (index: number) => {
+      return field?.[rowIndex]?.[columnIndex + index];
+    };
+
+    // const getDiagonal = (index: number) => {
+    //   return field?.[index]?.[index];
+    // };
+
+    // const getAntiDiagonal = (index: number) => {
+    //   return field?.[index]?.[numberCellsOnField - index - 1];
+    // };
+
+    const getterWinPositions = [getRow, getColl];
+
+
+    getterWinPositions.forEach((getterWinPosition) => {
+      const winner = calculateWinner(
+        getterWinPosition,
+        field[rowIndex][columnIndex]
+      );
+      if (winner) {
+        alert(`Winner: ${field[rowIndex][columnIndex]}`);
+      }
+      return !!field[rowIndex][columnIndex];
+    });
+
+    // getterWinPositions.forEach((getterWinPosition) => {
+    //   const winner = calculateWinner(getterWinPosition);
+    //   if (!!winner) {
+    //     alert(`Winner: ${winner}`);
+    //   }
+    //   return !!winner;
+    // });
+  }
 
   function updateField(rowIndex: number, columnIndex: number): FieldRows {
     const newField = [...field];
@@ -238,16 +299,10 @@ export default function GameProvider({ children }: PropsWithChildren) {
       return;
     }
     const newField = updateField(rowIndex, columnIndex);
-    const player = newField?.[rowIndex]?.[columnIndex];
-    const winner  = calculateWinner(player, +rowIndex, +columnIndex);
 
     setField(newField);
     setCurrentMove((move) => move + 1);
-    if (winner) {
-      setTimeout(() => {
-        alert(`Winner: ${player}`);
-      });
-    }
+    determinedWinner(newField, rowIndex, columnIndex);
   }
 
   function jumpTo(nextMove: number): void {
