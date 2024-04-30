@@ -1,8 +1,9 @@
 'use client';
 import {
+  Alert,
+  AlertTitle,
   Box,
   Button,
-  List,
   ListItem,
   ListItemButton,
   ListItemText,
@@ -15,12 +16,8 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import Cell from '../cell/cell';
 
 export default function Game() {
-  const {
-    history,
-    numberCellsOnField,
-    jumpTo,
-    resetStates,
-  } = useGameContext();
+  const { history, numberCellsOnField, jumpTo, resetStates } =
+    useGameContext();
 
   const moves = useMemo(
     () =>
@@ -32,7 +29,10 @@ export default function Game() {
           description = 'Go to game start';
         }
         return (
-          <ListItem disablePadding key={move}>
+          <ListItem
+            disablePadding
+            key={move}
+          >
             <ListItemButton
               sx={{ p: '0 5px', m: '5px 0', border: '1px solid grey' }}
               onClick={() => jumpTo(move)}
@@ -49,9 +49,9 @@ export default function Game() {
     <>
       <Box>
         <Button
-          variant="contained"
+          variant='contained'
           component={NextLink}
-          href="/"
+          href='/'
           sx={{
             mb: '20px',
           }}
@@ -61,12 +61,15 @@ export default function Game() {
         </Button>
       </Box>
       <Box
-        display="flex"
+        display='flex'
         sx={{
           height: '50vh',
         }}
       >
-        <Box display="flex" flexDirection="column">
+        <Box
+          display='flex'
+          flexDirection='column'
+        >
           <div style={{ height: '100%', width: '50vw' }}>
             <AutoSizer style={{ minWidth: '100%' }}>
               {({ height, width }) => (

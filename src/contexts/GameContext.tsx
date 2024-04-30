@@ -8,22 +8,25 @@ import {
 } from 'react';
 
 const noop = () => {};
-const defaultHistory = [Array(9).fill(null)];
-
-export interface FieldCell {
-  yIndex: number | null;
-  xIndex: number | null;
-  value: CellValue;
-}
 
 export type FieldRows = CellValue[][];
+export interface HistoryData {
+  rowIndex: number,
+  columnIndex: number,
+}
 
+export enum CellValue {
+  Empty = '',
+  X = 'X',
+  O = 'O',
+}
 export interface GameContextType {
-  history: string[][];
-  currentSquares: string[];
+  history: HistoryData[];
+  currentSquares: HistoryData | null;
   numberCellsOnField: number;
   customizeField: boolean;
   field: FieldRows;
+  winnerInGame: CellValue;
   jumpTo: (nextMove: number) => void;
   handleClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   changeNumberCellsOnField: (numb: number) => void;
@@ -33,10 +36,11 @@ export interface GameContextType {
 
 export const GameContext = createContext<GameContextType>({
   history: [],
-  currentSquares: [],
+  currentSquares: null,
   numberCellsOnField: 3,
   customizeField: false,
   field: [],
+  winnerInGame: CellValue.Empty,
   jumpTo: noop,
   handleClick: noop,
   changeNumberCellsOnField: noop,
@@ -44,186 +48,23 @@ export const GameContext = createContext<GameContextType>({
   resetStates: noop,
 });
 
-export enum CellValue {
-  Empty = '',
-  X = 'X',
-  O = 'O',
-}
-
 export default function GameProvider({ children }: PropsWithChildren) {
-  const [history, setHistory] = useState<CellValue[][]>(defaultHistory);
+  const [history, setHistory] = useState<HistoryData[]>([]);
   const [currentMove, setCurrentMove] = useState<number>(0);
 
   const [customizeField, setCustomizeField] = useState<boolean>(false);
   const [numberCellsOnField, setNumberCellsOnField] = useState<number>(3);
   const [field, setField] = useState<FieldRows>([]);
+  const [winnerInGame, setWinner] = useState<CellValue>(CellValue.Empty);
 
   const isXNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
-  // const calculateWinner = useCallback(
-  //   (player: CellValue, rowIndex: number, columnIndex: number): boolean => {
-  //     const maxSizeForWin = numberCellsOnField > 5 ? 5 : numberCellsOnField;
-
-  //     const countOnDirection = {
-  //       row: {
-  //         count: 1,
-  //         traverse: true,
-  //         reverse: true,
-  //       },
-  //       column: {
-  //         count: 1,
-  //         traverse: true,
-  //         reverse: true,
-  //       },
-  //       diagonal: {
-  //         count: 1,
-  //         traverse: true,
-  //         reverse: true,
-  //       },
-  //       antiDiagonal: {
-  //         count: 1,
-  //         traverse: true,
-  //         reverse: true,
-  //       },
-  //     };
-
-  //     for (let i = 1; i < maxSizeForWin; i++) {
-  //       // debugger;
-  //       // row traverse
-  //       if (
-  //         countOnDirection.row.traverse &&
-  //         rowIndex + i <= numberCellsOnField &&
-  //         field?.[rowIndex + i]?.[columnIndex] === player
-  //       ) {
-  //         countOnDirection.row.count++;
-
-  //         if (countOnDirection.row.count === maxSizeForWin) {
-  //           return true;
-  //         }
-  //       } else {
-  //         countOnDirection.row.traverse = false;
-  //       }
-
-  //       // row reverse
-  //       if (
-  //         countOnDirection.row.reverse &&
-  //         rowIndex - i >= 0 &&
-  //         field?.[rowIndex - i]?.[columnIndex] === player
-  //       ) {
-  //         countOnDirection.row.count++;
-
-  //         if (countOnDirection.row.count === maxSizeForWin) {
-  //           return true;
-  //         }
-  //       } else {
-  //         countOnDirection.row.reverse = false;
-  //       }
-
-  //       // column traverse
-  //       if (
-  //         countOnDirection.column.traverse &&
-  //         columnIndex + i <= numberCellsOnField &&
-  //         field?.[rowIndex]?.[columnIndex + i] === player
-  //       ) {
-  //         countOnDirection.column.count++;
-
-  //         if (countOnDirection.column.count === maxSizeForWin) {
-  //           return true;
-  //         }
-  //       } else {
-  //         countOnDirection.column.traverse = false;
-  //       }
-
-  //       // column reverse
-  //       if (
-  //         countOnDirection.column.reverse &&
-  //         columnIndex - i >= 0 &&
-  //         field?.[rowIndex]?.[columnIndex - i] === player
-  //       ) {
-  //         countOnDirection.column.count++;
-
-  //         if (countOnDirection.column.count === maxSizeForWin) {
-  //           return true;
-  //         }
-  //       } else {
-  //         countOnDirection.column.reverse = false;
-  //       }
-
-  //       // diagonal traverse
-  //       if (
-  //         countOnDirection.diagonal.traverse &&
-  //         rowIndex + i <= numberCellsOnField &&
-  //         columnIndex - i >= 0 &&
-  //         field?.[rowIndex + i]?.[columnIndex - i] === player
-  //       ) {
-  //         countOnDirection.diagonal.count++;
-
-  //         if (countOnDirection.diagonal.count === maxSizeForWin) {
-  //           return true;
-  //         }
-  //       } else {
-  //         countOnDirection.diagonal.traverse = false;
-  //       }
-
-  //       // diagonal reverse
-  //       if (
-  //         countOnDirection.diagonal.reverse &&
-  //         columnIndex + i <= numberCellsOnField &&
-  //         rowIndex - i >= 0 &&
-  //         field?.[rowIndex - i]?.[columnIndex + i] === player
-  //       ) {
-  //         countOnDirection.diagonal.count++;
-
-  //         if (countOnDirection.diagonal.count === maxSizeForWin) {
-  //           return true;
-  //         }
-  //       } else {
-  //         countOnDirection.diagonal.reverse = false;
-  //       }
-
-  //       // antiDiagonal traverse
-  //       if (
-  //         countOnDirection.antiDiagonal.traverse &&
-  //         columnIndex + i <= numberCellsOnField &&
-  //         rowIndex + i >= 0 &&
-  //         field?.[rowIndex + i]?.[columnIndex + i] === player
-  //       ) {
-  //         countOnDirection.antiDiagonal.count++;
-
-  //         if (countOnDirection.antiDiagonal.count === maxSizeForWin) {
-  //           return true;
-  //         }
-  //       } else {
-  //         countOnDirection.antiDiagonal.traverse = false;
-  //       }
-
-  //       // antiDiagonal reverse
-  //       if (
-  //         countOnDirection.antiDiagonal.reverse &&
-  //         rowIndex - i <= numberCellsOnField &&
-  //         columnIndex - i >= 0 &&
-  //         field?.[rowIndex - i]?.[columnIndex - i] === player
-  //       ) {
-  //         countOnDirection.antiDiagonal.count++;
-
-  //         if (countOnDirection.antiDiagonal.count === maxSizeForWin) {
-  //           return true;
-  //         }
-  //       } else {
-  //         countOnDirection.antiDiagonal.reverse = false;
-  //       }
-  //     }
-
-  //     return false;
-  //   },
-  //   [numberCellsOnField, field]
-  // );
-
   const calculateWinner = useCallback(
     (getCurrent: (index: number) => CellValue, player: CellValue): boolean => {
       let rightIndex = -1;
-      for (let i = 1; i < numberCellsOnField; i++) {
+      const maxSizeForWin = Math.min(numberCellsOnField, 5);
+      for (let i = 1; i <= maxSizeForWin; i++) {
         const currentValue = getCurrent(rightIndex === -1 ? i : rightIndex - i);
         if (currentValue === player) {
           continue;
@@ -236,7 +77,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
       }
       return true;
     },
-    []
+    [numberCellsOnField]
   );
 
   function determinedWinner(
@@ -251,35 +92,19 @@ export default function GameProvider({ children }: PropsWithChildren) {
       return field?.[rowIndex]?.[columnIndex + index];
     };
 
-    // const getDiagonal = (index: number) => {
-    //   return field?.[index]?.[index];
-    // };
+    const getDiagonal = (index: number) => {
+      return field?.[rowIndex + index]?.[columnIndex + index];
+    };
 
-    // const getAntiDiagonal = (index: number) => {
-    //   return field?.[index]?.[numberCellsOnField - index - 1];
-    // };
+    const getAntiDiagonal = (index: number) => {
+      return field?.[rowIndex - index]?.[columnIndex + index];
+    };
 
-    const getterWinPositions = [getRow, getColl];
+    const getterWinPositions = [getRow, getColl, getDiagonal, getAntiDiagonal];
 
-
-    getterWinPositions.forEach((getterWinPosition) => {
-      const winner = calculateWinner(
-        getterWinPosition,
-        field[rowIndex][columnIndex]
-      );
-      if (winner) {
-        alert(`Winner: ${field[rowIndex][columnIndex]}`);
-      }
-      return !!field[rowIndex][columnIndex];
-    });
-
-    // getterWinPositions.forEach((getterWinPosition) => {
-    //   const winner = calculateWinner(getterWinPosition);
-    //   if (!!winner) {
-    //     alert(`Winner: ${winner}`);
-    //   }
-    //   return !!winner;
-    // });
+    return getterWinPositions.some((getterWinPosition) =>
+      calculateWinner(getterWinPosition, field[rowIndex][columnIndex])
+    );
   }
 
   function updateField(rowIndex: number, columnIndex: number): FieldRows {
@@ -298,19 +123,37 @@ export default function GameProvider({ children }: PropsWithChildren) {
     if (field[rowIndex]?.[columnIndex]) {
       return;
     }
-    const newField = updateField(rowIndex, columnIndex);
+    const newField = updateField(+rowIndex, +columnIndex);
 
     setField(newField);
     setCurrentMove((move) => move + 1);
-    determinedWinner(newField, rowIndex, columnIndex);
+    setHistory(prevValue => [...prevValue, {rowIndex, columnIndex}]);
+    const winner = determinedWinner(newField, +rowIndex, +columnIndex);
+
+    if (winner) {
+      setWinner(newField[rowIndex][columnIndex]);
+    }
   }
 
   function jumpTo(nextMove: number): void {
     setCurrentMove(nextMove);
+    setField(() => {
+      const newField = [] as FieldRows;
+      for(let i = 0; i < nextMove; i++) {
+        if (!newField[history[i].rowIndex]) {
+          newField[history[i].rowIndex] = [];
+        }
+        newField[history[i].rowIndex][history[i].columnIndex] = i%2 === 0 ? CellValue.X : CellValue.O;
+      }
+      return newField;
+    }
+    )
   }
 
   function changeNumberCellsOnField(numb: number): void {
-    setNumberCellsOnField((prev) => numb);
+    const nextHistory = [...history.slice(0, currentMove + 1), {} as HistoryData];
+    setHistory(nextHistory);
+    setNumberCellsOnField(numb);
     setField([]);
   }
 
@@ -324,9 +167,11 @@ export default function GameProvider({ children }: PropsWithChildren) {
 
   function resetStates(): void {
     setCustomizeField(false),
-      setNumberCellsOnField(3),
-      setField([]),
-      setCurrentMove(0);
+    setNumberCellsOnField(3),
+    setField([]),
+    setCurrentMove(0);
+    setWinner(CellValue.Empty);
+    setHistory([])
   }
 
   return (
@@ -337,6 +182,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
         numberCellsOnField,
         customizeField,
         field,
+        winnerInGame,
         jumpTo,
         handleClick,
         changeNumberCellsOnField,
