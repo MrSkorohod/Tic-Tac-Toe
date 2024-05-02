@@ -14,33 +14,31 @@ export default function History() {
     () =>
       history.map((squares, move) => {
         const description = 'Go to move #' + (move + 1);
-        return (<MoveButton moveIndex={move + 1} jumpTo={jumpTo} key={move + 1} description={description}/>);
+        return (<MoveButton  jumpTo={() => jumpTo(move + 1)} key={move + 1} description={description}/>);
       }),
     [history, jumpTo]
   );
   return (
     <>
       <Typography>History Game</Typography>
-      <MoveButton moveIndex={0} jumpTo={jumpTo} description='Go to game start'/>
+      <MoveButton jumpTo={() => jumpTo(0)} description='Go to game start'/>
       {moves}
     </>
   );
 }
 
 function MoveButton({
-  moveIndex,
   description,
-  jumpTo,
+  jumpTo
 }: {
-  moveIndex: number;
   description: string;
-  jumpTo: (index: number) => void;
+  jumpTo: () => void;
 }) {
   return (
-    <ListItem disablePadding key={moveIndex}>
+    <ListItem disablePadding>
       <ListItemButton
         sx={{ p: '0 5px', m: '5px 0', border: '1px solid grey' }}
-        onClick={() => jumpTo(moveIndex)}
+        onClick={jumpTo}
       >
         <ListItemText primary={description} />
       </ListItemButton>

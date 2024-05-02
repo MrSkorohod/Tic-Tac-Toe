@@ -68,7 +68,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
     setField(newField);
     setCurrentMove((move) => move + 1);
     setHistory((prevValue) => [...prevValue, { rowIndex, columnIndex }]);
-    const winner = determinedWinner(newField, +rowIndex, +columnIndex);
+    const winner = determinedWinner(newField, +rowIndex, +columnIndex, numberCellsOnField);
 
     if (winner) {
       setWinner(newField[rowIndex][columnIndex]);
@@ -79,7 +79,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
     setCurrentMove(nextMove);
     setField(() => {
       const newField = [] as FieldRows;
-      for (let i = 0; i < nextMove; i++) {
+      for (let i = 0; i < nextMove; ++i) {
         if (!newField[history[i].rowIndex]) {
           newField[history[i].rowIndex] = [];
         }
@@ -151,8 +151,10 @@ function updateField(
 function determinedWinner(
   field: FieldRows,
   rowIndex: number,
-  columnIndex: number
-) {
+  columnIndex: number,
+  numberCellsOnField: number,
+): boolean {
+  console.log(field);
   const getRow = (index: number) => {
     return field?.[rowIndex + index]?.[columnIndex];
   };
@@ -174,7 +176,7 @@ function determinedWinner(
     calculateWinner(
       getterWinPosition,
       field[rowIndex][columnIndex],
-      field.length
+      numberCellsOnField
     )
   );
 }
@@ -186,7 +188,7 @@ function calculateWinner(
 ): boolean {
   let rightIndex = -1;
   const maxSizeForWin = Math.min(numberCellsOnField, 5);
-  for (let i = 1; i <= maxSizeForWin; i++) {
+  for (let i = 1; i <= maxSizeForWin; ++i) {
     const currentValue = getCurrent(rightIndex === -1 ? i : rightIndex - i);
     if (currentValue === player) {
       continue;
