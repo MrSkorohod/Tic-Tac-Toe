@@ -154,7 +154,6 @@ function determinedWinner(
   columnIndex: number,
   numberCellsOnField: number,
 ): boolean {
-  console.log(field);
   const getRow = (index: number) => {
     return field?.[rowIndex + index]?.[columnIndex];
   };
