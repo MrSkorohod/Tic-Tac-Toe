@@ -4,7 +4,6 @@ import {
   Button,
 } from '@mui/material';
 import { useGameContext } from '@/contexts/GameContext';
-import NextLink from 'next/link';
 import { FixedSizeGrid } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import Cell from '../cell/cell';
@@ -14,19 +13,7 @@ export default function Game() {
 
   return (
     <>
-      <Box>
-        <Button
-          variant="contained"
-          component={NextLink}
-          href="/"
-          sx={{
-            mb: '20px',
-          }}
-          onClick={() => resetStates()}
-        >
-          Return Back
-        </Button>
-      </Box>
+
       <Box
         display="flex"
         sx={{

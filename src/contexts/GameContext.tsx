@@ -60,7 +60,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
   function handleClick(event: React.MouseEvent<HTMLButtonElement>): void {
     const { rowIndex, columnIndex } = event.currentTarget
       .dataset as unknown as { rowIndex: number; columnIndex: number };
-    if (field[rowIndex]?.[columnIndex]) {
+    if (field[rowIndex]?.[columnIndex] || winnerInGame) {
       return;
     }
     const newField = updateField(+rowIndex, +columnIndex, field, isXNext);

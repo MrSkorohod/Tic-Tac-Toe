@@ -1,33 +1,46 @@
 'use client';
 import Game from '@/components/game/game';
 import History from '@/components/history/History';
+import WinnerSnackbar from '@/components/winner-snackbar/WinnerSnackbar';
 import { useGameContext } from '@/contexts/GameContext';
-import { Alert, AlertTitle, Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
+import NextLink from 'next/link';
 
 export default function GamePage() {
-  const { winnerInGame } = useGameContext();
+  const { numberCellsOnField, resetStates } = useGameContext();
+
   return (
     <>
-      {!!winnerInGame && (
-        <Alert severity='success'>
-          <AlertTitle>Winner!</AlertTitle>
-          Player {winnerInGame} win
-        </Alert>
-      )}
-
-      <Box display='flex'>
+      <WinnerSnackbar />
+      <Box
+        display='flex'
+        sx={{
+          mt: 4,
+          ml: 2,
+          textAlign: 'center',
+        }}
+      >
         <Box
-          component='main'
-          sx={{
-            mt: 4,
-            ml: 2,
-            textAlign: 'center',
-          }}
+          component='aside'
+          sx={{ width: '250px' }}
         >
-          <Game />
+          <Button
+            variant='contained'
+            component={NextLink}
+            href='/'
+            onClick={() => resetStates()}
+          >
+            Return Back
+          </Button>
         </Box>
-        <Box component='nav'>
-          <History />
+
+        <Box display='flex'>
+          <Box component='main'>
+            <Game />
+          </Box>
+          <Box component='nav'>
+            <History />
+          </Box>
         </Box>
       </Box>
     </>
