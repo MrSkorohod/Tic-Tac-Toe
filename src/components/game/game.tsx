@@ -1,8 +1,4 @@
 'use client';
-import {
-  Box,
-  Button,
-} from '@mui/material';
 import { useGameContext } from '@/contexts/GameContext';
 import { FixedSizeGrid } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -12,33 +8,19 @@ export default function Game() {
   const { numberCellsOnField, resetStates } = useGameContext();
 
   return (
-    <>
-
-      <Box
-        display="flex"
-        sx={{
-          height: '50vh',
-        }}
-      >
-        <Box display="flex" flexDirection="column">
-          <div style={{ height: '100%', width: '50vw' }}>
-            <AutoSizer style={{ minWidth: '100%' }}>
-              {({ height, width }) => (
-                <FixedSizeGrid
-                  columnCount={numberCellsOnField}
-                  columnWidth={34}
-                  height={height}
-                  rowCount={numberCellsOnField}
-                  rowHeight={34}
-                  width={width}
-                >
-                  {Cell}
-                </FixedSizeGrid>
-              )}
-            </AutoSizer>
-          </div>
-        </Box>
-      </Box>
-    </>
+    <AutoSizer defaultHeight={110} defaultWidth={110}>
+      {({ height, width }) => (
+        <FixedSizeGrid
+          columnCount={numberCellsOnField}
+          columnWidth={34}
+          height={height}
+          rowCount={numberCellsOnField}
+          rowHeight={34}
+          width={width}
+        >
+          {Cell}
+        </FixedSizeGrid>
+      )}
+    </AutoSizer>
   );
 }
