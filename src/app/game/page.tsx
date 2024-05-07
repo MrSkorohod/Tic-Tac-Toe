@@ -58,6 +58,8 @@ export default function GamePage() {
               minWidth: '250px',
               padding: '0 20px',
               borderLeft: '1px solid gray',
+              overflow: 'auto',
+              maxHeight: '90vh'
             }}
           >
             <History />

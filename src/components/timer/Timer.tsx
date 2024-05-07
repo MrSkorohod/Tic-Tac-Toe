@@ -27,7 +27,7 @@ export default function Timer({stopGame}: {stopGame: boolean}) {
     if(stopGame) {
       pause()
     }
-  }, [stopGame, pause, start])
+  }, [stopGame, pause])
 
   return (
     <>

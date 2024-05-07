@@ -93,6 +93,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
       }
       return newField;
     });
+    setHistory((prevValue) => prevValue.slice(0, nextMove));
   }
 
   function changeNumberCellsOnField(numb: number): void {
