@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useStopwatch } from 'react-timer-hook';
 
 export default function Timer({stopGame}: {stopGame: boolean}) {
@@ -10,13 +11,27 @@ export default function Timer({stopGame}: {stopGame: boolean}) {
     reset,
   } = useStopwatch({autoStart: true});
 
-  if(stopGame) {
-    pause();
-  }
+  const showTimer = () => {
+    const second = Math.floor(seconds)
+      .toString()
+      .padStart(2, "0");
+    const minute = Math.floor(minutes)
+      .toString()
+      .padStart(2, "0");
+
+
+    return (minute + ":" + second)
+  };
+
+  useEffect(() => {
+    if(stopGame) {
+      pause()
+    }
+  }, [stopGame, pause, start])
 
   return (
     <>
-      <span>{minutes}</span>:<span>{seconds}</span>
+      {showTimer()}
     </>
   );
 }

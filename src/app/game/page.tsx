@@ -6,7 +6,7 @@ import WinnerSnackbar from '@/components/winner-snackbar/WinnerSnackbar';
 import { useGameContext } from '@/contexts/GameContext';
 import { Box, Button, Typography } from '@mui/material';
 import NextLink from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function GamePage() {
   const { winnerInGame, resetStates } = useGameContext();
@@ -40,7 +40,7 @@ export default function GamePage() {
             Return Back
           </Button>
           <Typography variant="h5" component="h5" m="20px 0 40px">
-            <Timer stopGame={!!winnerInGame}/>
+          Game Time: <Timer stopGame={!!winnerInGame}/>
           </Typography>
         </Box>
 

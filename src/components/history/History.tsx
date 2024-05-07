@@ -6,6 +6,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useMemo } from 'react';
+import { FixedSizeList } from 'react-window';
 
 export default function History() {
   const { history, jumpTo } = useGameContext();
@@ -22,6 +23,7 @@ export default function History() {
     <>
       <Typography>History Game</Typography>
       <MoveButton jumpTo={() => jumpTo(0)} description='Go to game start'/>
+      {/* <FixedSizeList></FixedSizeList> */}
       {moves}
     </>
   );
