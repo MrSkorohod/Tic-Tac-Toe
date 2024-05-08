@@ -14,15 +14,21 @@ export default function History() {
     () =>
       history.map((squares, move) => {
         const description = 'Go to move #' + (move + 1);
-        return (<MoveButton  jumpTo={() => jumpTo(move + 1)} key={move + 1} description={description}/>);
+        return (
+          <MoveButton
+            jumpTo={() => jumpTo(move + 1)}
+            key={move + 1}
+            description={description}
+          />
+        );
       }),
     [history, jumpTo]
   );
   return (
     <>
       <Typography>History Game</Typography>
-      <MoveButton jumpTo={() => jumpTo(0)} description='Go to game start'/>
-      {moves}
+      <MoveButton jumpTo={() => jumpTo(0)} description="Go to game start" />
+        {moves}
     </>
   );
 }

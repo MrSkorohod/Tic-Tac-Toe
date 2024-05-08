@@ -2,8 +2,8 @@
 import {
   PropsWithChildren,
   createContext,
-  useCallback,
   useContext,
+  useEffect,
   useState,
 } from 'react';
 
@@ -60,7 +60,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
   function handleClick(event: React.MouseEvent<HTMLButtonElement>): void {
     const { rowIndex, columnIndex } = event.currentTarget
       .dataset as unknown as { rowIndex: number; columnIndex: number };
-    if (field[rowIndex]?.[columnIndex]) {
+    if (field[rowIndex]?.[columnIndex] || winnerInGame) {
       return;
     }
     const newField = updateField(+rowIndex, +columnIndex, field, isXNext);
@@ -68,7 +68,12 @@ export default function GameProvider({ children }: PropsWithChildren) {
     setField(newField);
     setCurrentMove((move) => move + 1);
     setHistory((prevValue) => [...prevValue, { rowIndex, columnIndex }]);
-    const winner = determinedWinner(newField, +rowIndex, +columnIndex, numberCellsOnField);
+    const winner = determinedWinner(
+      newField,
+      +rowIndex,
+      +columnIndex,
+      numberCellsOnField
+    );
 
     if (winner) {
       setWinner(newField[rowIndex][columnIndex]);
@@ -88,6 +93,7 @@ export default function GameProvider({ children }: PropsWithChildren) {
       }
       return newField;
     });
+    setHistory((prevValue) => prevValue.slice(0, nextMove));
   }
 
   function changeNumberCellsOnField(numb: number): void {
@@ -106,9 +112,9 @@ export default function GameProvider({ children }: PropsWithChildren) {
 
   function resetStates(): void {
     setCustomizeField(false),
-      setNumberCellsOnField(3),
-      setField([]),
-      setCurrentMove(0);
+    setNumberCellsOnField(3),
+    setField([]),
+    setCurrentMove(0);
     setWinner(CellValue.Empty);
     setHistory([]);
   }
@@ -152,7 +158,7 @@ function determinedWinner(
   field: FieldRows,
   rowIndex: number,
   columnIndex: number,
-  numberCellsOnField: number,
+  numberCellsOnField: number
 ): boolean {
   const getRow = (index: number) => {
     return field?.[rowIndex + index]?.[columnIndex];

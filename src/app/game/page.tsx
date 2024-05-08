@@ -1,33 +1,69 @@
 'use client';
 import Game from '@/components/game/game';
 import History from '@/components/history/History';
+import Timer from '@/components/timer/Timer';
+import WinnerSnackbar from '@/components/winner-snackbar/WinnerSnackbar';
 import { useGameContext } from '@/contexts/GameContext';
-import { Alert, AlertTitle, Box } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
+import NextLink from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function GamePage() {
-  const { winnerInGame } = useGameContext();
+  const { winnerInGame, resetStates } = useGameContext();
+
   return (
     <>
-      {!!winnerInGame && (
-        <Alert severity='success'>
-          <AlertTitle>Winner!</AlertTitle>
-          Player {winnerInGame} win
-        </Alert>
-      )}
-
-      <Box display='flex'>
+      <WinnerSnackbar />
+      <Box
+        display="flex"
+        sx={{
+          mt: 4,
+          ml: 2,
+          textAlign: 'center',
+        }}
+      >
         <Box
-          component='main'
+          component="aside"
           sx={{
-            mt: 4,
-            ml: 2,
-            textAlign: 'center',
+            width: '250px',
+            margin: '0 20px',
+            padding: '0 20px',
+            borderRight: '1px solid gray',
           }}
         >
-          <Game />
+          <Button
+            variant="contained"
+            component={NextLink}
+            href="/"
+            onClick={() => resetStates()}
+          >
+            Return Back
+          </Button>
+          <Typography variant="h5" component="h5" m="20px 0 40px">
+          Game Time: <Timer stopGame={!!winnerInGame}/>
+          </Typography>
         </Box>
-        <Box component='nav'>
-          <History />
+
+        <Box display="flex">
+          <Box
+            component="main"
+            sx={{ display: 'block', minWidth: '500px', height: '90vh' }}
+          >
+            <Game />
+          </Box>
+          <Box
+            component="nav"
+            sx={{
+              margin: '0 20px',
+              minWidth: '250px',
+              padding: '0 20px',
+              borderLeft: '1px solid gray',
+              overflow: 'auto',
+              maxHeight: '90vh'
+            }}
+          >
+            <History />
+          </Box>
         </Box>
       </Box>
     </>
